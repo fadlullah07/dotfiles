@@ -1,0 +1,35 @@
+
+# == Konfigurasi Global ==
+font=CodeNewRoman Mono Nerd 10
+border-radius=5
+default-timeout=5000
+anchor=top-right
+margin=5,5
+icons=1
+
+[app-name=brightness-indicator]
+group-by=app-name
+outer-margin=0,0,20,0
+anchor=bottom-center
+format=<b>%s</b>\n%b
+layer=overlay
+width=230
+height=110
+border-size=2
+text-alignment=center
+layer=overlay
+border-color=#a6e3a1
+text-color=#cdd6f4
+
+
+[app-name=volume-indicator]
+group-by=app-name
+width=230
+height=110
+border-size=2
+border-color=#a6e3a1
+text-color=#cdd6f4
+text-alignment=center
+format=<b>%s</b>\n%b
+outer-margin=0,0,20,0
+anchor=bottom-center
