@@ -1,0 +1,110 @@
+{
+  // Posisi bar: "top", "bottom", "left", "right"
+  "position": "top",
+  // Layer: "top", "bottom", "overlay"
+  "layer": "top",
+  "height": 26,
+  // Urutan modul yang akan ditampilkan
+  "modules-left": ["custom/archicon", "hyprland/workspaces", "hyprland/window"],
+  "modules-center": ["clock"],
+  "modules-right": [
+    "tray",
+    "network",
+    "bluetooth",
+    "pulseaudio",
+
+    "cpu",
+    "memory",
+    "battery",
+    "custom/power"
+  ],
+  // ... at the end of the file, with your other module definitions
+  "custom/archicon": {
+    "format": "󰣇", // This is the Arch Linux icon from Nerd Fonts
+    "tooltip": false,
+    "on-click": "~/.config/waybar/scripts/custom_menu.sh",
+    "cursor": true
+  },
+  // --- Konfigurasi untuk setiap modul ---
+  "hyprland/workspaces": {
+    "format": "{name}",
+    "cursor": true
+    // "on-click": "activate"
+  },
+  "hyprland/window": {
+    "format": "- {}",
+    "max-length": 35
+  },
+  "clock": {
+    "format": "{:%H:%M}",
+    "format-alt": "{:%A, %d %B %Y}",
+    "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+  },
+  "pulseaudio": {
+    "format": "{icon}  {volume}%",
+    "format-muted": "󰝟 Muted",
+    "on-click": "alacritty --class=Wiremix -e wiremix",
+    "format-icons": {
+      "headphone": "",
+      "hands-free": "󰋎",
+      "headset": "󰋎",
+      "default": ["", "", ""]
+    },
+    "scroll-step": 5
+  },
+  "bluetooth": {
+    "format": "󰂲",
+    "format-on": "{icon}",
+    "format-off": "{icon}",
+    "format-connected": "{icon}",
+    "format-icons": {
+      "on": "󰂯",
+      "off": "󰂲",
+      "connected": "󰂱"
+    },
+    "on-click": "blueberry",
+    "tooltip-format-connected": "{device_enumerate}"
+  },
+  "network": {
+    "format-wifi": "{essid}",
+    "format-ethernet": "{essid}",
+    "format-disconnected": "Disconnected",
+    "tooltip-format": "{ipaddr}/{cidr} ⇣{bandwidthDownBytes} ⇡{bandwidthUpBytes}",
+    "interval": 1,
+    "spacing": 1
+  },
+  "cpu": {
+    "interval": 1,
+    "format": "  {icon0}{icon1}{icon2}{icon3} {usage:>2}%",
+    "format-icons": ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"],
+    "on-click": "alacritty -e btop"
+  },
+  "memory": {
+    "format": "  {}%",
+    "interval": 2
+  },
+  "tray": {
+    "icon-size": 13,
+    "spacing": 10,
+    "cursor": true
+  },
+  "battery": {
+    "states": {
+      "good": 95,
+      "warning": 30,
+      "critical": 15
+    },
+    "format": "{icon} {capacity}%",
+    "format-charging": " {capacity}%",
+    "format-plugged": " {capacity}%",
+    "format-icons": [" ", " ", " ", " ", " "],
+    // Ini adalah baris kuncinya: saat di-klik, jalankan skrip menu daya
+    "on-click": "~/.config/waybar/scripts/power-profile.sh"
+  },
+  "custom/power": {
+    "format": "",
+    "tooltip": false,
+    "on-click": "~/.config/waybar/scripts/power-menu.sh",
+    "signal": 8
+  }
+}

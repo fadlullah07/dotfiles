@@ -1,7 +1,14 @@
 #!/bin/bash
 
 if [ "$#" -lt 3 ]; then
-  echo -e "\e[32mLet's create a new web app you can start with the app launcher.\n\e[0m"
+  # THIS IS THE MODIFIED PART
+  gum style \
+    --border normal \
+    --margin "1" \
+    --padding "1" \
+    --border-foreground 212 \
+    " Web App Creator" "Let's create a new web app for your launcher."
+
   APP_NAME=$(gum input --prompt "Name> " --placeholder "My favorite web app")
   APP_URL=$(gum input --prompt "URL> " --placeholder "https://example.com")
   ICON_REF=$(gum input --prompt "Icon URL> " --placeholder "See https://dashboardicons.com (must use PNG!)")
@@ -68,4 +75,5 @@ chmod +x "$DESKTOP_FILE"
 
 if [[ $INTERACTIVE_MODE == true ]]; then
   echo -e "You can now find $APP_NAME using the app launcher (SUPER + R)\n"
+  read -p "Press [Enter] to exit..."
 fi
