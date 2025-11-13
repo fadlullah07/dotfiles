@@ -33,7 +33,7 @@ window#waybar {
 }
 
 /* --- Tampilan Modul --- */
-#custom-archicon,
+
 #workspaces,
 #clock,
 #bluetooth,
@@ -49,6 +49,8 @@ window#waybar {
 }
 #custom-archicon {
   color: @blue;
+  padding: 0 5px;
+  margin: 3px 3px;
 }
 /* --- Tampilan Spesifik Modul --- */
 /* --- Workspaces --- */

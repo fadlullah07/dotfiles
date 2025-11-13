@@ -4,7 +4,8 @@
 # FORMAT: "Display Name" = "command_to_run"
 TERMINAL="${TERMINAL:-alacritty}"
 declare -A options
-options["Install web app 󰖟"]="$TERMINAL --class web-app-install -e $HOME/.config/hypr/scripts/web-app-install.sh"
+options["Install web app 󰖟"]="$TERMINAL --class web-app-install -e $HOME/.local/bin/web-app-install"
+options["Remove web app 󰖟"]="$TERMINAL --class web-app-remove -e $HOME/.local/bin/web-app-remove"
 
 menu_options=""
 for key in "${!options[@]}"; do

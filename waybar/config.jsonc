@@ -22,7 +22,7 @@
   "custom/archicon": {
     "format": "󰣇", // This is the Arch Linux icon from Nerd Fonts
     "tooltip": false,
-    "on-click": "~/.config/waybar/scripts/custom_menu.sh",
+    "on-click": "~/.local/bin/custom_menu",
     "cursor": true
   },
   // --- Konfigurasi untuk setiap modul ---
@@ -99,12 +99,12 @@
     "format-plugged": " {capacity}%",
     "format-icons": [" ", " ", " ", " ", " "],
     // Ini adalah baris kuncinya: saat di-klik, jalankan skrip menu daya
-    "on-click": "~/.config/waybar/scripts/power-profile.sh"
+    "on-click": "~/.local/bin/power-profile"
   },
   "custom/power": {
     "format": "",
     "tooltip": false,
-    "on-click": "~/.config/waybar/scripts/power-menu.sh",
+    "on-click": "~/.local/bin/power-menu",
     "signal": 8
   }
 }

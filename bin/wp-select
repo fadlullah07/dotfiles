@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# --- SHARED CONFIGURATION ---
+# This must be the same in both scripts.
+WALLPAPER_DIR="$HOME/Pictures/Wallpapers"
+STATE_FILE="/tmp/hypr-wallpaper-state"
+
+# --- SCRIPT LOGIC ---
+
+# Get a sorted list of all image files. This MUST match the method in the other script.
+WALLPAPERS=()
+while IFS= read -r -d $'\0' file; do
+  WALLPAPERS+=("$file")
+done < <(find "$WALLPAPER_DIR" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.gif" -o -iname "*.webp" \) -print0 | sort -z)
+
+# Check if any image files were found
+if [ ${#WALLPAPERS[@]} -eq 0 ]; then
+  notify-send "No image files found" "Please check your WALLPAPER_DIR configuration."
+  exit 1
+fi
+
+# Use wofi to select a wallpaper from the sorted list.
+# We pass the full path to wofi, but display only the filename for clarity.
+SELECTED_WALLPAPER=$(printf "%s\n" "${WALLPAPERS[@]}" | walker --dmenu -N -H -p "Choose Wallpaper")
+
+# Exit if the user cancelled wofi.
+if [ -z "$SELECTED_WALLPAPER" ]; then
+  exit 0
+fi
+
+# Set the chosen wallpaper
+hyprctl hyprpaper preload "$SELECTED_WALLPAPER"
+hyprctl hyprpaper wallpaper ",$SELECTED_WALLPAPER"
+
+# --- SYNCHRONIZATION LOGIC ---
+# Find the index of the selected wallpaper in our sorted list.
+# This is the crucial step to keep the scripts in sync.
+for i in "${!WALLPAPERS[@]}"; do
+  if [[ "${WALLPAPERS[$i]}" == "$SELECTED_WALLPAPER" ]]; then
+    # We found the index, save it to the state file
+    echo "$i" >"$STATE_FILE"
+    break # Exit the loop once found
+  fi
+done
+hyprctl hyprpaper unload all
+# Optional: Send a notification
+# notify-send "Wallpaper Changed" "Set to $(basename "$SELECTED_WALLPAPER")"

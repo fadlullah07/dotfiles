@@ -1,0 +1,77 @@
+#!/bin/bash
+
+# --- SHARED CONFIGURATION ---
+WALLPAPER_DIR="$HOME/Pictures/Wallpapers"
+STATE_FILE="/tmp/hypr-wallpaper-state"
+
+# --- COOLDOWN CONFIGURATION ---
+# Time in seconds to wait before allowing another change
+COOLDOWN_SECONDS=0.5
+LOCK_FILE="/tmp/wallpaper.lock"
+
+# --- SCRIPT LOGIC ---
+
+# Check if the lock file exists. If so, exit to prevent rapid cycling.
+if [ -f "$LOCK_FILE" ]; then
+  # Optional: notify the user that they are cycling too fast
+  # notify-send "Cooldown active" "Please wait a moment."
+  exit 0
+fi
+
+# Create the lock file to start the cooldown period
+touch "$LOCK_FILE"
+
+# Schedule the lock file to be removed after the cooldown period.
+# The '&' runs this command in the background.
+(sleep "$COOLDOWN_SECONDS" && rm -f "$LOCK_FILE") &
+
+# --- The rest of the script is the same ---
+
+# Exit if the wallpaper directory doesn't exist
+if [ ! -d "$WALLPAPER_DIR" ]; then
+  notify-send "Error" "Wallpaper directory not found: $WALLPAPER_DIR"
+  rm -f "$LOCK_FILE" # Clean up lock file on error
+  exit 1
+fi
+
+# Get a sorted list of all image files
+WALLPAPERS=()
+while IFS= read -r -d $'\0' file; do
+  WALLPAPERS+=("$file")
+done < <(find "$WALLPAPER_DIR" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.gif" -o -iname "*.webp" \) -print0 | sort -z)
+
+COUNT=${#WALLPAPERS[@]}
+if [ "$COUNT" -eq 0 ]; then
+  notify-send "Error" "No wallpapers found in $WALLPAPER_DIR"
+  rm -f "$LOCK_FILE" # Clean up lock file on error
+  exit 1
+fi
+
+# Get the current wallpaper index
+CURRENT_INDEX=0
+if [ -f "$STATE_FILE" ]; then
+  CURRENT_INDEX=$(cat "$STATE_FILE")
+fi
+
+if [ "$CURRENT_INDEX" -ge "$COUNT" ] || [ "$CURRENT_INDEX" -lt 0 ]; then
+  CURRENT_INDEX=0
+fi
+
+# Determine the next index
+if [ "$1" == "next" ]; then
+  NEXT_INDEX=$(((CURRENT_INDEX + 1) % COUNT))
+elif [ "$1" == "prev" ]; then
+  NEXT_INDEX=$(((CURRENT_INDEX - 1 + COUNT) % COUNT))
+else
+  NEXT_INDEX=$((RANDOM % COUNT))
+fi
+
+NEW_WALLPAPER="${WALLPAPERS[$NEXT_INDEX]}"
+
+# Set the new wallpaper
+hyprctl hyprpaper preload "$NEW_WALLPAPER"
+hyprctl hyprpaper wallpaper ",$NEW_WALLPAPER"
+
+# Save the new index to the state file
+echo "$NEXT_INDEX" >"$STATE_FILE"
+hyprctl hyprpaper unload all

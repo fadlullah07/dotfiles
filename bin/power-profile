@@ -14,7 +14,7 @@ DISPLAY_NAME=""
 if [ "$CURRENT_GOVERNOR" == "userspace" ]; then
   # Jika ya, atur nama tampilan menjadi "Balance"
   DISPLAY_NAME="Balance"
-elif ["$CURRENT_GOVERNOR" == "schedutil"]; then
+elif [ "$CURRENT_GOVERNOR" == "schedutil" ]; then
   DISPLAY_NAME="Performance"
 else
   # Jika tidak, gunakan nama governor aslinya

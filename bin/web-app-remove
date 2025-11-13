@@ -1,0 +1,85 @@
+#!/bin/bash
+
+# Define the directories where files were created
+DESKTOP_DIR="$HOME/.local/share/applications"
+ICON_DIR="$HOME/.local/share/applications/icons"
+
+# --- Function to delete the app files ---
+delete_app() {
+  APP_NAME="$1"
+  DESKTOP_FILE="$DESKTOP_DIR/$APP_NAME.desktop"
+  
+  # 1. Check if the .desktop file exists
+  if [[ ! -f "$DESKTOP_FILE" ]]; then
+    echo "Error: $DESKTOP_FILE not found."
+    exit 1
+  fi
+
+  # 2. Find the Icon path from within the .desktop file
+  ICON_PATH=$(grep -E "^Icon=" "$DESKTOP_FILE" | cut -d'=' -f2)
+
+  echo "App to delete: $APP_NAME"
+  echo "  - Desktop file: $DESKTOP_FILE"
+  echo "  - Linked icon: $ICON_PATH"
+
+  # 3. Delete the .desktop file
+  if rm "$DESKTOP_FILE"; then
+    echo "Deleted $DESKTOP_FILE"
+  else
+    echo "Error: Failed to delete $DESKTOP_FILE"
+  fi
+
+  # 4. Delete the icon *ONLY* if it's in our custom ICON_DIR
+  if [[ -n "$ICON_PATH" && "$ICON_PATH" == "$ICON_DIR/"* && -f "$ICON_PATH" ]]; then
+    if rm "$ICON_PATH"; then
+      echo "Deleted icon $ICON_PATH"
+    else
+      echo "Error: Failed to delete icon $ICON_PATH"
+    fi
+  else
+    echo "Icon was not in $DIR, was a system icon, or not found. Skipping icon deletion."
+  fi
+}
+
+# --- Main Script Logic ---
+
+if [ "$#" -eq 1 ]; then
+  # Non-interactive mode: Get app name from argument
+  APP_TO_DELETE="$1"
+  delete_app "$APP_TO_DELETE"
+else
+  # Interactive mode: Use gum to find and select
+  
+  # We removed the separate 'gum style' command
+  
+  APP_LIST=$(grep -l "Exec=chromium --app=" "$DESKTOP_DIR"/*.desktop 2>/dev/null | xargs -I {} basename {} .desktop)
+
+  if [[ -z "$APP_LIST" ]]; then
+    echo "No web apps (created by your script) found in $DESKTOP_DIR."
+    exit 0
+  fi
+
+  # Use gum filter WITH the header and style options built-in
+  APP_TO_DELETE=$(echo "$APP_LIST" | gum filter \
+      --header "Select a web app to remove." \
+      --header.border "normal" \
+      --header.border-foreground "212" \
+      --header.padding "1" \
+      --header.margin "1" \
+      --prompt "Select app> ")
+
+  if [[ -z "$APP_TO_DELETE" ]]; then
+    echo "No app selected. Exiting."
+    exit 0
+  fi
+
+  # Confirm deletion
+  if gum confirm "Are you sure you want to delete '$APP_TO_DELETE'?"; then
+    echo "" # Add newline
+    delete_app "$APP_TO_DELETE"
+    echo -e "\nUninstallation complete."
+    read -p "Press [Enter] to exit..."
+  else
+    echo "Deletion cancelled."
+  fi
+fi
