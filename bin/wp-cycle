@@ -25,7 +25,15 @@ touch "$LOCK_FILE"
 # The '&' runs this command in the background.
 (sleep "$COOLDOWN_SECONDS" && rm -f "$LOCK_FILE") &
 
-# --- The rest of the script is the same ---
+# --- HYPRPAPER CHECK (NEW) ---
+# Check if hyprpaper is running, if not, launch it
+if ! pgrep -x hyprpaper &>/dev/null; then
+  # Launch it in the background
+  hyprpaper &
+  # Give it a second to initialize before we send commands
+  sleep 1
+fi
+# --- END OF NEW BLOCK ---
 
 # Exit if the wallpaper directory doesn't exist
 if [ ! -d "$WALLPAPER_DIR" ]; then

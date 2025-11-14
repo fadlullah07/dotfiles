@@ -28,6 +28,15 @@ if [ -z "$SELECTED_WALLPAPER" ]; then
   exit 0
 fi
 
+# --- HYPRPAPER CHECK (NEW) ---
+# Check if hyprpaper is running, if not, launch it
+if ! pgrep -x hyprpaper &>/dev/null; then
+  # Launch it in the background
+  hyprpaper &
+  # Give it a second to initialize before we send commands
+  sleep 1
+fi
+# --- END OF NEW BLOCK ---
 # Set the chosen wallpaper
 hyprctl hyprpaper preload "$SELECTED_WALLPAPER"
 hyprctl hyprpaper wallpaper ",$SELECTED_WALLPAPER"
