@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # --- SHARED CONFIGURATION ---
-# This must be the same in both scripts.
 WALLPAPER_DIR="$HOME/Pictures/Wallpapers"
 STATE_FILE="/tmp/hypr-wallpaper-state"
+CONF_FILE="$HOME/.config/hypr/hyprpaper.conf" # <--- Added config path
 
 # --- SCRIPT LOGIC ---
 
-# Get a sorted list of all image files. This MUST match the method in the other script.
+# Get a sorted list of all image files.
 WALLPAPERS=()
 while IFS= read -r -d $'\0' file; do
   WALLPAPERS+=("$file")
@@ -19,38 +19,63 @@ if [ ${#WALLPAPERS[@]} -eq 0 ]; then
   exit 1
 fi
 
-# Use wofi to select a wallpaper from the sorted list.
-# We pass the full path to wofi, but display only the filename for clarity.
+# Use walker to select a wallpaper
+# Note: Ensure walker is installed and configured correctly
 SELECTED_WALLPAPER=$(printf "%s\n" "${WALLPAPERS[@]}" | walker --dmenu -N -H -p "Choose Wallpaper")
 
-# Exit if the user cancelled wofi.
+# Exit if the user cancelled
 if [ -z "$SELECTED_WALLPAPER" ]; then
   exit 0
 fi
 
-# --- HYPRPAPER CHECK (NEW) ---
+# -----------------------------------------------------
+# 1. PERMANENT CONFIG CHANGE (NEW SECTION)
+# -----------------------------------------------------
+# This ensures the wallpaper persists after reboot.
+
+# Create the config file if it doesn't exist
+if [ ! -f "$CONF_FILE" ]; then
+  touch "$CONF_FILE"
+fi
+
+# Create a temp file excluding old 'preload' and 'wallpaper' lines
+# We use grep -v to keep everything EXCEPT the wallpaper settings
+grep -vE "^preload|^wallpaper" "$CONF_FILE" >"$CONF_FILE.tmp"
+
+# Append the new settings to the temp file
+echo "preload = $SELECTED_WALLPAPER" >>"$CONF_FILE.tmp"
+echo "wallpaper = ,$SELECTED_WALLPAPER" >>"$CONF_FILE.tmp"
+
+# Overwrite the original config with the new one
+mv "$CONF_FILE.tmp" "$CONF_FILE"
+
+# -----------------------------------------------------
+# 2. LIVE SESSION UPDATE
+# -----------------------------------------------------
+
 # Check if hyprpaper is running, if not, launch it
 if ! pgrep -x hyprpaper &>/dev/null; then
-  # Launch it in the background
   hyprpaper &
-  # Give it a second to initialize before we send commands
   sleep 1
 fi
-# --- END OF NEW BLOCK ---
-# Set the chosen wallpaper
+
+# Preload the new wallpaper
 hyprctl hyprpaper preload "$SELECTED_WALLPAPER"
+
+# Apply the wallpaper (comma means all monitors)
 hyprctl hyprpaper wallpaper ",$SELECTED_WALLPAPER"
+
+# Unload old wallpapers to free RAM (Hyprpaper keeps the active one)
+hyprctl hyprpaper unload all
 
 # --- SYNCHRONIZATION LOGIC ---
 # Find the index of the selected wallpaper in our sorted list.
-# This is the crucial step to keep the scripts in sync.
 for i in "${!WALLPAPERS[@]}"; do
   if [[ "${WALLPAPERS[$i]}" == "$SELECTED_WALLPAPER" ]]; then
-    # We found the index, save it to the state file
     echo "$i" >"$STATE_FILE"
-    break # Exit the loop once found
+    break
   fi
 done
-hyprctl hyprpaper unload all
-# Optional: Send a notification
-# notify-send "Wallpaper Changed" "Set to $(basename "$SELECTED_WALLPAPER")"
+
+# Optional: Notification
+notify-send "Wallpaper Updated" "Set to $(basename "$SELECTED_WALLPAPER") and saved to config."

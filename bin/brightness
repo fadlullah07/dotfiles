@@ -9,28 +9,27 @@ send_notification() {
   # Buat progress bar
   BAR=""
   for i in {1..20}; do
-    # Setiap bar mewakili 5%
     if [ $i -le $((PERCENTAGE / 5)) ]; then
-      BAR="${BAR}█" # Blok terisi
+      BAR="${BAR}━" # Heavy Horizontal
     else
-      BAR="${BAR}░" # Blok kosong
+      BAR="${BAR}─" # Light Horizontal
     fi
   done
 
   # Kirim notifikasi menggunakan flag -a yang benar untuk Mako
-  notify-send -a "brightness-indicator" "Brightness" "${BAR} ${PERCENTAGE}%" -t 1000
+  notify-send -a "brightness-indicator" "  ${BAR} ${PERCENTAGE}%" -t 1000
 }
 
 # Periksa argumen yang diberikan ke script
 case $1 in
 up)
   # Naikkan kecerahan sebesar 5%
-  brightnessctl set +5% >/dev/null
+  brightnessctl set +3% >/dev/null
   send_notification
   ;;
 down)
   # Turunkan kecerahan sebesar 5%
-  brightnessctl set 5%- >/dev/null
+  brightnessctl set 3%- >/dev/null
   send_notification
   ;;
 *)

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if pgrep -x "hypridle" > /dev/null
+then
+    # Hypridle is running, kill it (Disable Idle)
+    killall hypridle
+    notify-send "☕ Caffeine Mode" "Enabled - Screen will not lock"
+else
+    # Hypridle is not running, start it (Enable Idle)
+    hypridle &
+    notify-send "💤 Caffeine Mode" "Disabled - Screen will lock normally"
+fi

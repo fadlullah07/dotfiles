@@ -15,27 +15,27 @@ send_notification() {
 
   # Tentukan ikon berdasarkan status
   if [ "$MUTED" = "true" ]; then
-    ICON="🔇"
+    ICON="󰖁 "
   elif [ "$VOLUME" -eq 0 ]; then
-    ICON="🔈"
+    ICON="󰕿 "
   elif [ "$VOLUME" -le 30 ]; then
-    ICON="🔉"
+    ICON="󰖀 "
   else
-    ICON="🔊"
+    ICON="󰕾 "
   fi
 
-  # Buat progress bar
+  # Buat progress bar (Dashed Style)
   BAR=""
   for i in {1..20}; do
     if [ $i -le $((VOLUME / 5)) ]; then
-      BAR="${BAR}█"
+      BAR="${BAR}━" # Heavy Horizontal
     else
-      BAR="${BAR}░"
+      BAR="${BAR}─" # Light Horizontal
     fi
   done
 
   # Kirim notifikasi
-  notify-send -a "volume-indicator" "${ICON} Volume" "${BAR} ${VOLUME}%" -t 1000 -r 9991
+  notify-send -a "volume-indicator" "${ICON} ${BAR} ${VOLUME}%" -t 1000 -r 9991
 }
 
 # --- BAGIAN UTAMA YANG DIPERBAIKI ---
