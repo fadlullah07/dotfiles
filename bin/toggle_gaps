@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# Use -j to get JSON and jq to extract the custom 'int' value
+# 2. If null, try to extract the first number from the 'custom' string
+VAL=$(hyprctl getoption general:gaps_in -j | jq -r 'if .int != null then .int else (.custom | split(" ")[0]) end')
+
+# Check if VAL is actually a number, default to 0 if not
+if ! [[ "$VAL" =~ ^[0-9]+$ ]]; then
+  VAL=0
+fi
+if [ "$VAL" -ne 0 ]; then
+  hyprctl --batch "keyword general:gaps_in 0; keyword general:gaps_out 0"
+else
+  # Replace 5 and 10 with your preferred default gap sizes
+  hyprctl --batch "keyword general:gaps_in 2; keyword general:gaps_out 5"
+fi

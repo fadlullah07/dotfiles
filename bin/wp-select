@@ -40,14 +40,13 @@ fi
 
 # Create a temp file excluding old 'preload' and 'wallpaper' lines
 # We use grep -v to keep everything EXCEPT the wallpaper settings
-grep -vE "^preload|^wallpaper" "$CONF_FILE" >"$CONF_FILE.tmp"
-
+# grep -vE "^preload|^wallpaper" "$CONF_FILE" >"$CONF_FILE.tmp"
 # Append the new settings to the temp file
-echo "preload = $SELECTED_WALLPAPER" >>"$CONF_FILE.tmp"
-echo "wallpaper = ,$SELECTED_WALLPAPER" >>"$CONF_FILE.tmp"
+# echo "preload = $SELECTED_WALLPAPER" >>"$CONF_FILE.tmp"
+sed -i "s|path = .*|path = $SELECTED_WALLPAPER|" "$CONF_FILE"
 
 # Overwrite the original config with the new one
-mv "$CONF_FILE.tmp" "$CONF_FILE"
+# mv "$CONF_FILE.tmp" "$CONF_FILE"
 
 # -----------------------------------------------------
 # 2. LIVE SESSION UPDATE

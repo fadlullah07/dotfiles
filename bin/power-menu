@@ -3,8 +3,8 @@
 # Tentukan opsi menu Anda.
 # Format \n adalah untuk baris baru.
 # Anda bisa menggunakan ikon (Nerd Fonts) di sini jika Anda mau!
-options="Shutdown \nReboot \nSuspend 󰒲\nLogout 󰍃\nLock "
 
+options="Shutdown 󰶐\nReboot \nSuspend 󰒲\nLogout 󰍃\nLock "
 # Gunakan 'walker -dmenu' untuk menampilkan menu.
 # 'echo -e' diperlukan untuk memproses karakter \n dan ikon.
 # Contoh dengan --no-search dan --prompt
@@ -12,11 +12,13 @@ choice=$(echo -e "$options" | walker --dmenu --nosearch -N -H --width 295 --minh
 
 # Gunakan 'case' untuk menentukan apa yang harus dilakukan berdasarkan pilihan
 case "$choice" in
-"Shutdown ")
+"Shutdown 󰶐")
   systemctl poweroff
+  # notify-send "test"
   ;;
-"Reboot ")
+"Reboot ")
   systemctl reboot
+  # notify-send "test"
   ;;
 "Suspend 󰒲")
   systemctl suspend

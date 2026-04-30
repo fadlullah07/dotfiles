@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Set the threshold
+THRESHOLD=20
+# Get battery capacity (usually BAT0 or BAT1)
+BATTERY=$(cat /sys/class/power_supply/BAT1/capacity)
+# Get charging status
+STATUS=$(cat /sys/class/power_supply/BAT1/status)
+
+if [ "$BATTERY" -le "$THRESHOLD" ] && [ "$STATUS" = "Discharging" ]; then
+  notify-send -u critical "Low Battery 󰢜" "Battery is at ${BATTERY}%! Plug in your charger."
+fi

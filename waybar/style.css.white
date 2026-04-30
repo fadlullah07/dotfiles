@@ -1,3 +1,4 @@
+
 /*
 *
 * Catppuccin Mocha CSS for Waybar
@@ -88,43 +89,43 @@ window#waybar {
   font-weight: normal;
 }
 #custom-caffeine {
-  color: #c1785a; /* Peach color, optional */
+  color: white; /* Peach color, optional */
   padding: 0 5px;
 }
 
 /* Modul dengan warna berbeda (contoh) */
 #clock {
-  color: @magenta;
+  color: white;
 }
 #bluetooth {
-  color: #8abeb9;
+  color: white;
 }
 #pulseaudio {
-  color: @blue;
+  color: white;
 }
 #pulseaudio.muted {
-  color: @red;
+  color: white;
 }
 
 #network {
-  color: @green;
+  color: white;
   font-size: 12px;
 }
 #network.disconnected {
-  color: @red;
+  color: white;
 }
 
 #cpu {
-  color: @yellow;
+  color: white;
 }
 
 #memory {
-  color: @cyan;
+  color: white;
 }
 #battery {
-  color: #e45a92;
+  color: white;
 }
 #custom-power {
-  color: #08cb00;
+  color: white;
   margin-right: 5px;
 }

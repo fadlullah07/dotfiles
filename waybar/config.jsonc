@@ -12,7 +12,7 @@
     "network",
     "bluetooth",
     "pulseaudio",
-
+    "custom/caffeine",
     "cpu",
     "memory",
     "battery",
@@ -66,15 +66,22 @@
     "tooltip-format-connected": "{device_enumerate}"
   },
   "network": {
-    "format-wifi": "{essid}",
-    "format-ethernet": "{essid}",
-    "format-disconnected": "Disconnected",
-    "tooltip-format": "{ipaddr}/{cidr} ⇣{bandwidthDownBytes} ⇡{bandwidthUpBytes}",
+    "format-wifi": " ",
+    "format-ethernet": "󰈀 ",
+    "format-disconnected": "󰤭 ",
+    "tooltip-format": "{essid} ⇣{bandwidthDownBytes} ⇡{bandwidthUpBytes}",
+    "on-click": "alacritty --class=Impala -e impala & iwctl station wlan0 scan",
     "interval": 1,
     "spacing": 1
   },
+  "custom/caffeine": {
+    "exec": "pgrep -x hypridle > /dev/null && echo '󰾪 ' || echo '󰅶 '",
+    "interval": 3,
+    "on-click": "~/.local/bin/caffeine",
+    "tooltip": false
+  },
   "cpu": {
-    "interval": 1,
+    "interval": 2,
     "format": "  {icon0}{icon1}{icon2}{icon3} {usage:>2}%",
     "format-icons": ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"],
     "on-click": "alacritty -e btop"
